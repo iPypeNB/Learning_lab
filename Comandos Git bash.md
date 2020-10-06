@@ -65,6 +65,7 @@
     -   git branch -d <name branch>: eliminar una rama.
     -   git checkout <name branch>:  cambia la rama a la que HEAD apunta. (cambiar entre ramas)
     -   git merge <name branch>: unifica dos ramas, esto funcion trayendo la verison de la rama mencionada hacia la rama en donde se ejecuta el comando.
+    -   git show-branch --all: muestra el historial que han tenido las ramas.
 
 * Comandos para crar y editar Tags.
 # los tags permiten establecer una guia de avance del proyecto, esto permiten por ejemplo establecer cuando un proyecto se encuentra en una version alpha.
@@ -73,6 +74,7 @@
     -   git tag -a <name tag> <cod commit> -m "message": establece un tag en la version del commit seleccionada.
     -   git tag -d <name tag>: elimina el tag seleccionado.
     -   git show <name tag>: muestra la informacion del tag.
+    -   git show-ref --tags: muestra las referencais de los tags creados.
 
 * Comandos para manejar un repositorio remoto
 # los repositorios remotos son los que permiten establecer una copia en un servidor sobre los proyectos que se trabajan, estos pueden ser por ejemplo github, gitlab.
@@ -81,9 +83,8 @@
     -   git push <name origin> <name branch>: envia los archivos del repositorio local a el origen remoto.
     -   git fetch <name origin> <name branch>: recupera la informacion del repositorio remoto y la almacena el el repositorio local, este comando no modifica los archivos, por lo que para poder modificar los archivos locales falta ingresar el comando: git merge
     -   git pull <name origin> <name branch>: es como utlizar el comando fetch y merge ya que este trae los archivos del repositorio remoto actualizando los archivos del repositorio local.
-
-
-
-
+    -   git pull origin master --allow-unrelated-histories: permite convinar dos repositorios (remoto-local) con historias no relacionadas.
+    -   git push origin --tags: envia los tags creados localmente a el repositorio remoto.
+    -   git push origin :refs/tags/<name tag>: borra los tags creados y subidos a el repositorio remoto.
 
 
