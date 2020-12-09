@@ -65,6 +65,18 @@
     - para crear una imgaen propia se utiliza un archivo llamado Dockerfile en el que se van a ingresar los parametros necesarios para crear la imagen.
     - docker build -t <name image>:<version tag> <path>  : se contruye una imagen a partir del docker file, se tiende a utilizar como nombre de la imagen a el nombre de la imagen base(:) nombre de la imagen propia, el path es importante tenerlo en cuenta ya que es el directorio de donde docker va a generar el build 
 
+# archivo dockerfile
+- los archivos dockerfile son archivos que se utilizan para crear imagenes de docker personalizadas, estos archivos pueden contener:
+    - FROM <name type image>: este comando !SI O SI¡ debe estar en el dockerfile y es con lo que comienza el archivo, este comando define la imagen en la cual se va a basar nuestra imagen personalizada, ej: FROM  ubuntu, FROM scratch (from scartch es practicamente traer solo el kernel de linux)
+    - COPY [<dirrectory local context>, <directory container context>]: copia los archivos presenten en el contexto de build (segun donde definamos el contexto de build) en el contenedor, como dirección del servidor se usa normalmente: /usr/src/
+    - WORKDIR <directory workspace container>: este comando especifica la dirección del entorno de trabajo para el contenedor, funciona como un cd de la linea de comandos.
+    - RUN <command>: ejecuta el comando especificado.
+    - EXPOSE <port>: expones el puerto del contenedor para que pueda ser accedido de forma externa.
+    - CMD [<COMMANDS>]: ejecuta los comandos expecificados cuando en el build no se le especifica otro comando.
+- es importante tener en cuenta como es que docker maneja el cache (este trabaja como git al generar una imagen), docker busca como son los cambios entre las imagenes y define la nueva imagen segun los cambios (si una nueva imagen se crea igual que otra ya utilizada, lo hace uttilizando el cache ya que asi se ahorra proceso.), para poder utilizar esto de forma correcta lo que se hace es utilizar los comando de tal forma que las dependencias "que no se suelen cambiar" se integran primero y los archivos que si se suelen modificar se integran despues para que así docker utilice el cache en el maximo numero de pasos posibles.
+- como actualizar el contenido de un contenedor sin tener que hacer un build a la imagen:
+    - se montan los archivos en el docker a traves del metodo de bind mount. (esto permite que el contenedor monitoree un directorio de la maquina host y quita la necesidad de actualizar la imagen.)
+
 # Repositorios en docker
 - cuando nosotros descargamos una imagen de docker lo que estamos haciendo es descargar una imagen de un reporitorio oficial, estos repositorios vienen de un servidor o serivicio web creado por docker (docker hub), este funciona como github y git (se manejan versionamientos, repositorioa publicos, privados, etc.)
 - para poder compartir imagenes propias de debe crear una cuenta en docker hub a la cual se van a subir las imagenes creadas.
@@ -82,5 +94,10 @@
     - ports: muestra los puertos que están expuestos en el contenedor (esto es lo que permite aislar los contenedores o generar conexion entre ellos)
     - names: nombres de los contenedores (no se pueden repetir)
 
-
-
+# como ccrear conexiones entre los contenedores.
+- para poder crear conexiones entre los contenedores docker nos ofrece una herramienta que es docker network, con este comando se pueden crear conexiones utilizando los diferentes metodos.
+    - bridge: en terminos de redes una red bridge es una red que que trabaja en la capa de enlace, que reenvía el tráfico entre segmentos de red. Un bridge puede ser un dispositivo de hardware o un software que se ejecuta dentro de un kernel de la maquina host, bridge es una red que utiliza un parametro link, este metodo ya no es tan utilizado debido a temas de retrocompatibilidad.
+    - host: es la forma que tiene docker de representar la red de la maquina host. Cuando se utiliza una red de tipo host  lo que sucede es que la pila de red del contenedor deja de estar aislada de la maquina host y el contenedor pasa a obtener una dirección IP asignada, ej: si uno utiliza un contenedor que se une al puerto 80 y utiliza una red host la aplicación del contenedor estará disponible en el puerto 80 en la dirección ip del host, lo que sucede con este comando es que expone todos los puertos del contenedor y tanto la maquina host como el contenedor quedan "expuestos".
+    -none: esto gener que el contenedor quede totalmente aislado dado que desconecta de todos los puertos al contenedor.
+    - docker network create <name network>: con esto se crea una red personalizada, este tipo de red dura el mismo timempo que el container.
+    - docker network create --attachable <name network>: con este comando se especifica que contenedores nuevos tengan la capacidad de conectarse a travez de esta red.
