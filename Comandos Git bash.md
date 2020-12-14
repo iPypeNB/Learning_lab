@@ -54,8 +54,8 @@
     -   git reset <code commit> --soft: cambia el estado del repositorio conservando los cambios y trackeados (no los vuelve untracked).
 # el checkout lo que hace es crear una cabeza desprendida (HEAD detached) que permite visualizar los archivos en el estado del commit seleciconado.
     -   git checkout <cod commit>: lleva el HEAD a la version del commit seleccionado, para volver al head "original" se ingresa el comando: git switch -
-    -   git switch -: se sale del estado HEAD desconectado y regresa a el ultimo commit realizado, este comando funcion si no se uso git switch -c <branch name> ya que si se uso este comando para regresar al commit original se usa: git switch master.
-    -   git switch -c <name branch> (dentro de git checkout <cod commit>): permite crear una nueva branch a partir del commit selccionado por el checkout.
+    -   git switch - || git checkout master: se sale del estado HEAD desconectado y regresa a el ultimo commit realizado, este comando funcion si no se uso git switch -c <branch name> ya que si se uso este comando para regresar al commit original se usa: git switch master.
+    -   git switch -c <name branch> (dentro de git checkout <cod commit>) || git checkout -b <name branch>: permite crear una nueva branch a partir del commit selccionado por el checkout.
     -   git checkout <cod commit> <name file>: permite visualizar el estado del archivo en la version del commit seleccionado.
 
 * Comandos para tener el manejo de las branchs.

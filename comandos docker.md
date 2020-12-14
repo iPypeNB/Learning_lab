@@ -44,7 +44,9 @@
 - !nota¡:   que un puerto esté abierto en un docker no significa que exista una conexion por el puerto desde la maquina local, es decir en estos casos podemos interpretar a los contenedores como una maquina virtual en la que al estar aislado los puertos hanilitados (por defecto) estan habilitados internamente en el mismo contenedor, para poder generar la conexión desde la maquina local hasta el contenedor se debe poner:
     - docker run -d --name <name container> -p <port host: port container> <name type image>
 - !nota¡: hay que tener en cuenta que cuando asignamos un puerto de conexión entre el host y los containers, los puertos del host no se pueden repetir. (ya que por ej: solo existe un puerto 8080 en el host.)
-- Generar conexión entre el container y un volumen (directorio) de nuestra maquina host, este metodo se conoce como bind mount.
+
+# conservar los datos de un contenedor
+- Generar conexión entre el container y un directorio de nuestra maquina host, este metodo se conoce como bind mount.
     - docker run -d --name <name containe> -v <directory host machine: directory container> <name type image>:crea un docker con conexion con un directorio de la maquina host.
 - conectar contenedor a volumen creado.
     - docker run -d --name <name container> --mount src=<name volume>,dst=<directory container> <name type image>
@@ -52,7 +54,7 @@
 
 
 # Como generar volumenes con docker (metodo alternativo a bind mount)
-- como se sabe los contenedores son agrupaciones de procesos aislados de la maquina host y/o otros contenedores, lo que sucede es que cuando se elimina un contenedor todos los datos contenidos en el contenedor se eliminan junto al contenedor, está es la solucion que se ofrece con lo volumenes (como alternativa al bind mount). Los volumenes son un directorio o fichero en el docker engine, el objetivo o la eficiencia de crear unos volumenes está en conectarlos con un storage remoto y trabajar en un entorno basado en la nube.
+- como se sabe los contenedores son agrupaciones de procesos aislados de la maquina host y/o otros contenedores, lo que sucede es que cuando se elimina un contenedor todos los datos contenidos en el contenedor se eliminan junto al contenedor, está es la solucion que se ofrece con los volumenes (como alternativa al bind mount). Los volumenes son un directorio o fichero en el docker engine, el objetivo o la eficiencia de crear unos volumenes está en conectarlos con un storage remoto y trabajar en un entorno basado en la nube.
     - docker volume ls : lista todos los volumenes que han sido creados por los contenedores.
     - docker volume prune: elimina todos los volumenes que no son utilizados por ningun contenedor.
     - docker volume create <name volume>: crea un nuevo volumen.
@@ -94,10 +96,36 @@
     - ports: muestra los puertos que están expuestos en el contenedor (esto es lo que permite aislar los contenedores o generar conexion entre ellos)
     - names: nombres de los contenedores (no se pueden repetir)
 
-# como ccrear conexiones entre los contenedores.
+# como crear conexiones entre los contenedores.
 - para poder crear conexiones entre los contenedores docker nos ofrece una herramienta que es docker network, con este comando se pueden crear conexiones utilizando los diferentes metodos.
     - bridge: en terminos de redes una red bridge es una red que que trabaja en la capa de enlace, que reenvía el tráfico entre segmentos de red. Un bridge puede ser un dispositivo de hardware o un software que se ejecuta dentro de un kernel de la maquina host, bridge es una red que utiliza un parametro link, este metodo ya no es tan utilizado debido a temas de retrocompatibilidad.
     - host: es la forma que tiene docker de representar la red de la maquina host. Cuando se utiliza una red de tipo host  lo que sucede es que la pila de red del contenedor deja de estar aislada de la maquina host y el contenedor pasa a obtener una dirección IP asignada, ej: si uno utiliza un contenedor que se une al puerto 80 y utiliza una red host la aplicación del contenedor estará disponible en el puerto 80 en la dirección ip del host, lo que sucede con este comando es que expone todos los puertos del contenedor y tanto la maquina host como el contenedor quedan "expuestos".
     -none: esto gener que el contenedor quede totalmente aislado dado que desconecta de todos los puertos al contenedor.
     - docker network create <name network>: con esto se crea una red personalizada, este tipo de red dura el mismo timempo que el container.
     - docker network create --attachable <name network>: con este comando se especifica que contenedores nuevos tengan la capacidad de conectarse a travez de esta red.
+    - docker network connect <name network> <name container>: conectar un contenedor a la red especificada, es importante tomar en cuenta de que el contendor debe esta "corriendo" ejecutandose o no se conectara a la red.
+    - docker network inspect <name network>: docker muestra todos los parametros de la red especificada.
+- si dos contenedores estan conectados bajo la misma red, se pueden comunicar utilizando su nombre como host name.
+- cuando conectamos diferentes contenedores a la misma red es importante tener en cuenta la forma en como los interconectamos entre ellos, como se mencionó antes esto se puede lograr llamando a los contenedores por su nombre, en el caso de una web app con una db (Js y mongo), ej: se crea un contenedor de db el cual se va a conectar a a la red, a este NO se le configura ningun puerto de expose (-p), se crea un contenedor con el backend al que se le va a configurar un puerto de expose (-p, con este puerto se va a comunicar con la maquina host) y se le configura una variable de entorno que se va a encargar de conectarse con el contenedor de db a travez del mismo nombre, los comandose serian algo así.
+    - docker network create --attachable <name network>
+    - docker run -d --name <name container> <name type image> <--- "este es el contenedor de la base de datos(db)"
+    - docker network connect <name network> <name container> <--- "se conecta al contenedor de la db"
+    - docker run -d --name <name container> -p <port host machine>:<port container> --env MONGO_URL=mongodb://<name container (db)>:<port>/<name db> <name type image> <--- "se crea una variable env suponiendo que la base de datos es MONGO"
+    - docker network connect <name network> <name container> <--- "contenedor del backend"
+
+# docker compose
+- docker compose es un archivo tipo yml (utiliza la sintaxis yaml) que se encarga de construir la estructura de la aplicación de forma declarativa, configura las conexiones entre los contenedores, los puertos, los tipoes de imagen etc, en docker compose podemos encontrar:
+    - version: indica la version por la cual docker compose va a realizar la estructura.(esto puede cambiar la sintaxis)
+    - services: describe los servicios que va a tener la aplicación (asi es como se pueden interpretar los contenedores en docker-compose, la diferencia entre un servicio y un contenedor es que un servicio puede contener varios contendores).
+        - <name container>: dentro de los servicioes se definen los contenedores.
+        - image: define el tipo de imagen que va a ser el contenedor
+        - environment: se definen las variable de entorno del contenedor
+            - <name variable>: <command>
+        - depends_on: define las dependencias de los servicios o contenedores, sirve para definir el orden de la creación de los contenedores, pero no define como tal el orden de inizialicación.
+        - ports:  define los puertos de conexion entre el host y el contenedor o servicio.
+
+# comandos docker-compose
+- docker-compose tiene unos comandos que nos permite manipular las costrucciones realizadas.
+    - docker-compose up -d: levanta un docker-compose basandose en el archivo yml creado (-d: para ejecutarlo en segundo plano).
+    - docker-compose logs logs -f: muestra los posibles errores en los registros y peticiones.
+    - docker-compose ps: al igual que docker ps nos muestra los contenedores
