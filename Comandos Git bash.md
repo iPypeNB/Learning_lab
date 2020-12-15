@@ -21,7 +21,7 @@
     -   git add: agrega el archivo a el area de stage
     -   git commit; git commit -m "messagge": sube y actualiza los archivos en el repositorio.
     -   git commit -am "messagge": este me permite realizar el add y el commit en un solo comando, colocando el mensaje.
-    -   git restore <name file>: funciona cuando se tiene el archivo en untracked y se desea descartar los cambios hechos en el working directory.
+    -   git restore <name file> || git checkout -- <name file>: funciona cuando se tiene el archivo en untracked y se desea descartar los cambios hechos en el working directory.
     -   git restore --staged <name file> : funciona cuando se tiene un archivo tracked y se desea regrear del area de stage a el area del working directory.
     -   git mv: este permite mover un archivo o cambiarle el nombre sin perder el tracking sobre el mismo.
     -   git rm: remueve los archivos del repositorio sin perder su historial durante el mismo.
