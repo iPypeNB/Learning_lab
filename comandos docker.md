@@ -24,7 +24,8 @@
 # comandos
 - !nota¡: los nombres de los container no se pueden repetir, los contenedores se dejan de ejecutar cuando el proceso pincipal temina (genera un exit).
     - docker --version : ver la version de docker
-    - docker run --name <name container> <name type image>: iniciar un nuevo contenedor
+    - docker build: crea una imagen a partir de un dockerfile.
+    - docker run --name <**name container**> <**name type image**>: iniciar un nuevo contenedor
     - docker run -d <name type image>: se utiliza el modificador -d ó --detach para ejecutar el comando en segundo plano
     - docker ps: lista de contendores
     - docker ps -a: lista de contenedores completa (a: all)
@@ -117,15 +118,49 @@
 - docker compose es un archivo tipo yml (utiliza la sintaxis yaml) que se encarga de construir la estructura de la aplicación de forma declarativa, configura las conexiones entre los contenedores, los puertos, los tipoes de imagen etc, en docker compose podemos encontrar:
     - version: indica la version por la cual docker compose va a realizar la estructura.(esto puede cambiar la sintaxis)
     - services: describe los servicios que va a tener la aplicación (asi es como se pueden interpretar los contenedores en docker-compose, la diferencia entre un servicio y un contenedor es que un servicio puede contener varios contendores).
-        - <name container>: dentro de los servicioes se definen los contenedores.
+        - <name service>: dentro de los servicios se definen los nombres de cada uno de los servicios.
+        - name_container: define el nombre del contenedor.
         - image: define el tipo de imagen que va a ser el contenedor
         - environment: se definen las variable de entorno del contenedor
             - <name variable>: <command>
         - depends_on: define las dependencias de los servicios o contenedores, sirve para definir el orden de la creación de los contenedores, pero no define como tal el orden de inizialicación.
-        - ports:  define los puertos de conexion entre el host y el contenedor o servicio.
+        - ports:  define los puertos de conexion entre el host y el contenedor o servicio, en los puertos de host se puede seleccionar un rango de puerto para que cuando se haga scale no se obstaculicen los puertos.
+        - build: permite construir un contenedor de forma presonalizada a partir de un dockerfile, "evitando en parte" la creacion  de un servicio desde una imagen standar.
+- !nota¡ cuando vemos en la imagenes el nombre <none> es porque son versiones viejas de docker que fueron ejecutados a partir de build; cuando se buildea una imagen se puede utilizar el docker-compose up -d y docker correra los contenedores a partir de la imagen ya buildeada.
+        - volumes: nos permite crear fuentes de almacenamiento compartida y/o perpetuas como: bind-mount, volumenes.
+- cuando creamos un volumes a partir de un bind-mount hay que tener en cuenta que el bind-mount sobree escribe todo el directorio que se ha seleccionado en el contenedor, para solicitar que una parte no se sobre escriba podemos poner en volumes: <directory in container> (la direccion dentro del contenedor que no queremos que se borren (no se colocan los (:)))
+- !nota! para poder crear una actualizacion automatica de los documentos (ej: nodemon identifique los cambios) podemos crear un bind-mount y asi se van a actualizar los archivos de forma automatica en el contendor.
+
 
 # comandos docker-compose
 - docker-compose tiene unos comandos que nos permite manipular las costrucciones realizadas.
-    - docker-compose up -d: levanta un docker-compose basandose en el archivo yml creado (-d: para ejecutarlo en segundo plano).
+    - docker-compose up -d: levanta un docker-compose basandose en el archivo yml creado (-d: para ejecutarlo en segundo plano), se puede hacer 2 veces el docker-up y docker busca las diferencias para el mismo actualizar los contendores.
     - docker-compose logs logs -f: muestra los posibles errores en los registros y peticiones.
     - docker-compose ps: al igual que docker ps nos muestra los contenedores
+    - docker-compose down: detiene los contenedores y las redes creadas.
+    - docker-compose down -v: detiene los contenedores, las redes y borra los volumenes creados.
+- !nota¡ por defecto docker toma el nombre del directorio para crear los nombres de los contenedores y redes.
+    - docker-compose logs <service>: me muestra los log generados por el servicio especificado.
+    - docker-compose exec <service> bash: executa el comando en el servicio especificado.
+    - docker-compose scale <service>=<number>: crea mutiples contenedores del servicio seleccionado, esto sirve para poder escalar un servicio web y a través de un balanceador de carga, distribuir el numero de peticiones en los contenedores, cuando se hace scale la conexion entre los puertos debe ser por rango (ports: 300-3010:3000)
+
+# docker ignore 
+- para poder ignorar algunos elementos que no queremos que se monten en el contenedor podemos hacer uso del archivo .dockerignore que tiene un funcionamiento muy parecido al de git.
+    - nomarlmente en el contenedor se ignora el dockerfile: no es necesario subirlo, ¿para qué si ya se buildeo la imagen?.
+    - modulos descargados de las dependencias, ej: node_modules.
+    - los readme o archivos de log que no sean necesarios para el funcionamiento del contenedor.
+
+# docker a nivel de producción.
+- cuando creamos el dockerfile y construimos la imagen podemos crear distintos archivos de tipo docker file y con esto diferenciar el docker de desarrollo y el de produccion, ej: development.dockerfile, production.dockerfile, para correr un docker file especifico debemos poner. 
+    - docker build -t <container> -f <name dockerfile>
+
+# docker multi-stage build
+- este concepto parte de que se pueden crear archivos de dockerfile que generen "stage" y se pueda hacer una diferenciación entre docker-development y docker-production, con este concepto también se puede hacer que exista una comunicación entre ellos.
+    - en el primer stage: FROM <image> as <name>
+    - en el segundo stage: <comman> --from=<name>
+
+# docker in docker
+- como manejar docker desde un contenedor, este concepto parte de que se necesita crear un contenedor sin la necesidad de poder correr docker sin que sea de forma nativa en la maquina host (escribir los comandos directamente), con docker in docker, podemos ejecutar un contenedor que contenga docker y a través de una conexion por socket podemos ejecutar los comandos de docker.
+    - docker run -it -v /var/run/docker.sock:/var/run/docker.sock docker:<version>
+
+
