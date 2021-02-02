@@ -22,27 +22,31 @@ Los diagramas de modelado son una herramienta grafica que sirve como abstracció
 #### Herencia
 - La herencia es cuando una clase adquiere las caracteristicas de otra clase, es decir, la herencia permite que se puedan definir nuevas clases basadas en unas ya existentes. en uml la direccion de la flecha ira desde el hijo hasta el padre.
 
-#### Agregacion
+#### Agregación
 - Este concenpto es muy parecido al de asociacion en cuanto a que un elemento depende de otro, la diferencia esta en que lo que sucede en agregacion es que un elemento depende de muchos otros.
 
-#### Composicion
+#### Composición
 - esta es una relacion mas estricta que la asociacion, esto se debe a que conceptualmente una clase no podria existir si la otra no existe.
 
-## Objetos
+## Características y elementos de la POO.
+
+### Objetos
 Es aquel elemento conceptual en la programacion orientada a objetos que se compone por unas propiedades (atributos) y unos comportamientos (metodos).
 
-## Clases
+### Clases
 Es un modelo por el cual los objetos se van a construir, es decir, las clases son las plantillas que le permiten a los objetos cobrar vida, cuando un objeto se declara a partir de una clase a esto se le llama instancia de la clase.
 
-### Abstraccion
+#### Abstracción
 Es cuando se abstraen los datos (propiedades y comportamientos) de un "objeto real" y se contruye un molde (clase) a partir de la abstraccion.
 
-## Modularidad
+### Modularidad
 Es cuando se subdivide un sistema en elementos mas pequeños, estas divisiones se le llaman modulos.
 
-## Herencia
+### Herencia
+La clase padre en POO se suele conocer como la super clase (hay algunos lenguajes que utilizan esa palabra clave para identificar a la clase padre) y las clases que heredan las caracteristicas de la clase padre son las subclases. 
 
 ## Codigo
+la clases se pueden contruir de diferente manera segun el lenguaje de programación que se utiliza.
 
 ### Ejemplos:
 
