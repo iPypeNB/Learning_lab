@@ -19,7 +19,6 @@ Actualmente el servidor **HTTP WSGI** más utilizado para el desarrollo de aplic
 
 ### ASGI
 
-
 ## Iniciar un proyecto django
 siempre que se trabaja con python es importante crear un entorno virtual ya que este nos permite instalar los paquetes necesarios del proyecto deseado sin generar conflicto con lo paquetes instalados para otro proyecto. Teniendo el entorno virtual de Python se instala el paquete de Django con el siguiente comando:
 
@@ -38,6 +37,11 @@ cuando se crea un nuevo proyecto en django el contenido del proyecto es el sigui
     - __urls.py__: Es el archivo encargardo de administrar la peticiones que lleguen al web service
     - __wsgi.py__: Es el archivo usado durante el deplyment durante la produccion y es la interfaz wsgi con nuestro proyecto en django.
 - __manage.py__: Este archivo lo que hace es generar una intefaz sobre _django-admin_ y permite ejecutar ciertos codigos desde consola para interactuar con el proyecto en django.
+
+## Administracion, funciones y orden de los elementos Django.
+Cuando trabajamos en un proyecto Django cada modulo cumple cierta funcion que permite que django sea un framework escalable y facil de utilizar. El esquema de organizacion de Django permite a los desarrolladores compreder de forma muy sencilla como esta elaborado una aplicacion web y como esta asministra las urls, las vistas, los modelos, la base de datos, etc.
+
+Las url son las encargadas de definir las url dentro de la aplicacion web y son las encargadas de hacer un match con un modulo interno "_vista_", las vistas en django son las ecargadas de la logica de la obtencion de los datos, estas vistas son la logica de la url relacionada con el modulo interno, los templates son la logica de como presentar estos datos.
 
 ## Comandos django-admin consola
 
@@ -61,6 +65,31 @@ Una App en Django describe a un paquete de python que proporciona un conjunto de
 - python3 manage.py startapp _`name_app`_
 - django-admin startapp _`name_app`_
 
+### Contenido de una App Django
+- **__ init__.py**: Declara a la app como un modulo de python.
+- __`migrations/`__: folder que contiene los archivos encargados de grabar los cambios en la base de datos.
+    - **__ init__.py**: Declara las migrations como un modulo de python.
+- **admin.py**: Se encarga de registrar los modelos en el administrador de Django.
+- **apps.py**: Declara toda la configuracion de nuestra app hacia el publico en caso de que la app sea reutilizable.
+- **models.py**: Es para definir los modelos de los datos.
+- **test.py**: Archivo encargado para el testing de la app.
+- **views.py**: Se encarga de las vistas de la app.
+
+## Template system
+Template system es la forma de agregar HTML en la presentacion de los datos, como se menciono anteriormente, los url's se encargan de enlazar las direcciones de la aplicacion web con las vistas, las vistas son las encargadas de administrar la logica sobre la obtencion de datos en las url's y los templates son los encargados de administrar como se muestran esos datos.
+
+Es importante tener en cuenta que gracias a Django podemos trabajar logica con "sintaxis python" dentro de los documentos HTML facilitando la forma en como se presentan los datos.
+
+## Patrones de diseño
+Los patrones de diseño son modelos de solucion que permite crear aplicaciones reutilizables. En el desarrollo web existe un patron de diseño conocido como MVC (modelo - vista - controlador) este patron de diseño permite separar la obtencion de los datos de la presentacion y de la logica.
+- Controlador: se encarga de manejar la logica de las peticiones (request), trabaja la logica interna de la aplicacion web y se encarga de cambiar las vistas en base a los modelos.
+- modelo: es el que se encarga de definir al estructura de los datos, el acceso a ellos e incluso al validacion.
+- vista: se encarga de la logica de como presentar los datos.
+
+En Django hay un patron de diseño basado en el MVC y es el MTV (model - template - view), donde:
+- modelo: define la estructura de los datos.
+- template: logica de presentacion de los datos.
+- vista: encargado de la logica de la obtencion de los datos y su enlace con los templates.
 
 
 
