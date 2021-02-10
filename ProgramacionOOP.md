@@ -31,7 +31,7 @@ Los diagramas de modelado son una herramienta grafica que sirve como abstracció
 ## Características y elementos de la POO.
 
 ### Objetos
-Es aquel elemento conceptual en la programacion orientada a objetos que se compone por unas propiedades (atributos) y unos comportamientos (metodos).
+Es aquel elemento conceptual en la programacion orientada a objetos que se compone por unas propiedades (atributos) y unos comportamientos (metodos). Un objeto es una instancia de una clase.
 
 ### Clases
 Es un modelo por el cual los objetos se van a construir, es decir, las clases son las plantillas que le permiten a los objetos cobrar vida, cuando un objeto se declara a partir de una clase a esto se le llama instancia de la clase.
@@ -46,11 +46,13 @@ Es cuando se subdivide un sistema en elementos mas pequeños, estas divisiones s
 La clase padre en POO se suele conocer como la super clase (hay algunos lenguajes que utilizan esa palabra clave para identificar a la clase padre) y las clases que heredan las caracteristicas de la clase padre son las subclases. 
 
 ## Codigo
+
+### crear una clase
 la clases se pueden contruir de diferente manera segun el lenguaje de programación que se utiliza.
 
-### Ejemplos:
+#### Ejemplos:
 
-#### Java
+##### Java
 ```java
 class Person{
     String name = "felipe";
@@ -60,7 +62,7 @@ class Person{
     }
 }
 ```
-#### Python
+##### Python
 ```python
 class Person:
     name = 'felipe'
@@ -68,7 +70,7 @@ class Person:
     def walk():
         pass
 ```
-#### Javacript
+##### Javacript
 ```javascript
 class Person {
     constructor(){
@@ -81,7 +83,7 @@ class Person {
 }
 ```
 
-#### PHP
+##### PHP
 ```php
 class Person {
     $name = "Felipe";
@@ -91,5 +93,56 @@ class Person {
     }
 }
 ```
+### crear un objeto
+Como se menciono anteriormente un objeto es una instacia de una clase, es decir si tenemos una clase vehiculo un objeto seria ese hermoso dodge challenger que tanto quieres 😎.
 
+#### Ejemplos
 
+##### Java
+```java
+Person person = new Person();
+```
+
+##### Python
+```python
+person = Person()
+```
+
+##### JavaScript
+```javascript
+var person = new Person();
+```
+
+##### PHP
+```php
+$person = new Person();
+```
+
+### Metodo constructor
+El metodo constructor es el metodo que se llama cuando se instancia una clase y es el encargado de dar un estado inicial a el objeto, tiene el mismo nombre de la clase y solicita los parametros minimos necesarios para poder instanciar la clase, por norma de buenas practicas los metodos constructores no deben retornar ningun valor.
+
+#### Ejemplos
+
+##### Java
+```java
+public Person(String name){
+    this.name = name;
+}
+```
+##### Python
+```python
+def __init__(self,name):
+    self.name = name
+```
+##### JavaScript
+```javascript
+function Person(name){
+    this.name = name
+}
+```
+##### PHP
+```php
+public function _construct($name){
+    $this->name = name;
+}
+```

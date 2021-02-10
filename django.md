@@ -46,6 +46,9 @@ Las url son las encargadas de definir las url dentro de la aplicacion web y son 
 ## Comandos django-admin consola
 
 ## Comandos manage.py consola
+- python3 manage.py runserver: inicia el servidor de forma local del proyecto.
+- python3 manage.py migrate: migra los datos modificados del proyecto a la base de datos, aplica los cambios en los modelos en la base de datos.
+- python3 manage.py makemigrations: crea laS migraciones para que sean establecidas en la base de datos, revisa los cambios en los modelos y los refleja en un archivo.
 
 ## Objeto Request
 El objeto request es el encargado de almacenar las peticiones realizadas por el usuario, en django cuando se recibe una solicitud (request) el objeto request se procesa de la siguiente manera:
@@ -91,9 +94,13 @@ En Django hay un patron de diseño basado en el MVC y es el MTV (model - templat
 - template: logica de presentacion de los datos.
 - vista: encargado de la logica de la obtencion de los datos y su enlace con los templates.
 
+## Patron de diseño MTV
 
+### Modelos
+Los modelos son todos los archivos que nos permiten manejar la logica y la estructuracion de los datos que necesita almacenar la aplicacion web, estos archivos son los encargado de generar la comunicacion con la bases de datos y estructurarlos de tal manera que sea facil presentarlos a traves de los templates con el usuario.
 
- 
+#### ORM
+ORM (object reational mapping) es un modelo de programacion que permite mapear las estructuras de una base de datos relacional. En Django el ORM es un conjunto de clases que nos permiten interactuar con la base de datos y definir la estructura de las tablas.
 
 
 
