@@ -1,5 +1,10 @@
 # Programación orientada a objetos
 
+## Abstraccion
+abtraer elementos que no se pueden referenciar tangecialmente.
+enfocarnos a la informacion relevante.
+## Decomposicion
+partir un problema grande en prblemas mas pequeños.
 ## Diagramas de modelado
 Los diagramas de modelado son una herramienta grafica que sirve como abstracción de la solución a la problematica encontrada, funcionan como un intermediario entre la problematica de la vida real y la formulación del codigo. estas herramientas graficas nos permiten visualizar de forma sencilla como es que nosotros abtraemos la información necesaria de las problematicas planteadas.
 
@@ -146,3 +151,88 @@ public function _construct($name){
     $this->name = name;
 }
 ```
+### Declaracion de clases Caso Especial JavaScript
+
+#### Antes de EcmaScript6
+
+```javascript
+function Car(license, driver){
+    this.id;
+    this.license = license;
+    this.driver = driver;
+}
+
+Car.prototype.printData = function(){
+    console.log(this.license)
+    console.log(this.driver)
+}
+```
+#### Despues de EcmaScript6
+```javascript
+class Car {
+    constructor (license, driver){
+        this.id;
+        this.license = license;
+        this.driver = driver;
+    }
+    
+    printData(){
+        console.log(this.driver);
+        console.log(this.license);
+    }
+}
+```
+
+### Herencia
+la forma de declarar la herencia en los distintos lenguajes es:
+#### java
+```java
+class Student extends Person{
+    public Student(){
+        super();
+    }
+}
+```
+#### PHP
+```php
+class Student extends Person{
+    public function __construct(){
+        parent::__construct();
+    }
+}
+```
+#### Python
+```python
+class Student(Person):
+    def __init__():
+        super.__init__()
+```
+
+#### JavaScript
+
+##### antes de EcmaScript 6
+```javascript
+student.prototype = new Person();
+```
+
+##### despues de EcmaScript 6
+```javascript
+class Student extends Person {
+    constructor(){
+        super()
+    }
+}
+```
+Como se puede ver es importante al momento de usar la herencia en el constructor de la clase hijo hacer referencia al constructor de la clase padre ya que es importante "inicializar" la clase padre a traves de la clase hijo con todos los parametro obligatorios.
+
+### Encapsulamiento
+haces que un dato sea inmmutable cuando se le asigne un modificador de acceso, esto es cambiar los modificadores de acceso:
+- public:
+- protected: 
+- default:
+- private:
+
+getter and setter: son unos metodos que permiten acceder a esos atributos que se encuentran encapsulados solo reescribir los atributos si cumplen con el proceso en especifico (ejemplo: solo si la variable es <= 3 almacenela)
+
+### Polimorfismo
+Es cuando cada una de las clases hijo tiene la capacidad de modificar los metodos heredados de la misma clase padre. Es cuando se contruyen metodos con el mismo nombre pero de comportamiento diferente.

@@ -64,7 +64,8 @@ El objeto request es el encargado de almacenar las peticiones realizadas por el 
 ## Apps Django
 El concepto de **proyecto** en django hace referencia a la aplicacion web, el paquete del proyecto python se define principalmente en el modulo settings.py. Cuando se incia un proyecto Django el directorio raiz (el que contiene el archivo manage.py) del proyecto suele ser el contenedor de todas las aplicaciones que no se instalan por separado (todas las aplicaciones creadas por el desarrollador).
 
-Una App en Django describe a un paquete de python que proporciona un conjunto de caracteristicas. las Apps pueden ser reutilizadas en varios proyectos, para instalar una aplicacion en un proyecto django se pueden utilizar los siguientes comandos:
+Una App en Django describe a un paquete de python que proporciona un conjunto de caracteristicas. las Apps pueden ser reutilizadas en varios proyectos, una aplicacion es un conjunto de codigo que se encarga de resolver una parte muy especifica del proyecto, las aplicaciones en django contienen sus propios modelos, vistar, url's, etc. Para instalar una aplicacion en un proyecto django se pueden utilizar los siguientes comandos:
+
 - python3 manage.py startapp _`name_app`_
 - django-admin startapp _`name_app`_
 
@@ -83,6 +84,8 @@ Template system es la forma de agregar HTML en la presentacion de los datos, com
 
 Es importante tener en cuenta que gracias a Django podemos trabajar logica con "sintaxis python" dentro de los documentos HTML facilitando la forma en como se presentan los datos.
 
+los templates son los archivos HTML que permiten la inclusion y ejecucion de logica especial para la presentacion de los datos.
+
 ## Patrones de diseño
 Los patrones de diseño son modelos de solucion que permite crear aplicaciones reutilizables. En el desarrollo web existe un patron de diseño conocido como MVC (modelo - vista - controlador) este patron de diseño permite separar la obtencion de los datos de la presentacion y de la logica.
 - Controlador: se encarga de manejar la logica de las peticiones (request), trabaja la logica interna de la aplicacion web y se encarga de cambiar las vistas en base a los modelos.
@@ -90,9 +93,9 @@ Los patrones de diseño son modelos de solucion que permite crear aplicaciones r
 - vista: se encarga de la logica de como presentar los datos.
 
 En Django hay un patron de diseño basado en el MVC y es el MTV (model - template - view), donde:
-- modelo: define la estructura de los datos.
-- template: logica de presentacion de los datos.
-- vista: encargado de la logica de la obtencion de los datos y su enlace con los templates.
+- modelo: define la estructura de los datos, esta es la parte en los proyectos Django que se encarga de estructurar las tablas y la propiedades de la base de datos a traves de las clases en python.
+- template: logica de presentacion de los datos, son los documentos HTML que permiten la inclusion y ejecucion de logica.
+- vista: encargado de la logica de la obtencion de los datos y su enlace con los templates, es la parte en los proyectos Django que se encarga de la "logica de negocio", funciona como intermediario entre los templates y el modelo.
 
 ## Patron de diseño MTV
 
@@ -101,6 +104,4 @@ Los modelos son todos los archivos que nos permiten manejar la logica y la estru
 
 #### ORM
 ORM (object reational mapping) es un modelo de programacion que permite mapear las estructuras de una base de datos relacional. En Django el ORM es un conjunto de clases que nos permiten interactuar con la base de datos y definir la estructura de las tablas.
-
-
-
+-
