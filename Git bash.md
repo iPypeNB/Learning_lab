@@ -1,17 +1,28 @@
-* Link donde muestra los comandos.
--   https://bluuweb.github.io/tutorial-github/guia/fundamentos.html
--   https://www.git-scm.com/
+# Comandos de Git y conceptos basicos.
+## ¿Que es Git?
+Git es un sistema de control de versiones distribuido. Esto significa que al enlazar un proyecto con git, este va a crear una copia del proyecto llamada repositorio. Esta copia se puede ir sincronizando con lo avances del proyecto e ir creando versiones del mismo cada vez que se actualiza la copia (repositorio).
+## Areas de un repositorio Git
+- Respositorio: es la carpeta que crea Git con la informacion de las versiones del proyecto
+- Espacio de trabajo (Workspace): El espacio de trabajo es el area donde se va a trabajar el proyecto local; la carpeta principal de la cual Git realiza la copia para sincronizar el repositorio.
+- Area de escenario (Stage Area): El "Stage Area" es un area donde se disponen todos los archivos con cambios que se desea sincronizar entre el repositorio y el area de trabajo.
 
-* Comandos para configurar y ver opciones en git.
-# comandos que permiten ver los parametros almacenados en git
-    -   git config --global -l: permite ver los parametros almacenados en git
-    -   git config --global -e: permite editar los parametros almacenados en git.
+Cuando se desea sincronizar el area de trabajo con el repositorio los archivos y cambios deben pasar anteas a el area de stage, hay que tener en cuenta que.
+- El espacio de trabajo tiene como almacenamiento la carpeta en la que se está realizando el proyecto.
+- El repositorio tiene como almacenamiento la carpeta que crea git la cual es una carpeta oculta (.git)
+- el area de stage almacena los cambios en la memoria RAM, es por esto que toca tener precaucion cuando se situan los cambio en esta area.
+## Comandos de Git
+### Inicio y creación de un repositorio.
+Cuando se inicia o se crea un repositorio, git crea una carpeta oculta (.git) en la que se va a almacenar el repositorio.
+    -   git init: crea un repositorio vacio de forma local.
+    -   git clone: clona un repositorio ya creado desde un sitio remoto. (copia el contenido de un proyecto remoto, ej: github).
+### Configuración y variables de Git.
+    - git config: permite manejar todas la configuraciones de los parametros en el repositorio y en la configuracion global de git (coreo,nombre,etc).
+        -   git config --global -l: permite ver los parametros almacenados en git
+        -   git config --global -e: permite editar los parametros almacenados en git.
     -   git version: permite ver la version de git.
+    - git help: muestra los comandos
 
 *   Comandos para iniciar un repositorio de Git
-# cuando se inicia un repositorio git se crea una carpeta oculta (.git) que va a ser la que almacena el repositorio.
-    -   git init: crea un repositorio vacio.
-    -   git clone: clona un repositorio ya creado.
 
 * Comandos para cambiar el estado de un archivo en Git.
 # los archivo en git pueden tener 3 estados : untracked, tracked and upload 
@@ -87,4 +98,7 @@
     -   git push origin --tags: envia los tags creados localmente a el repositorio remoto.
     -   git push origin :refs/tags/<name tag>: borra los tags creados y subidos a el repositorio remoto.
 
-
+# Bibliografia
+* Link donde muestra los comandos.
+-   https://bluuweb.github.io/tutorial-github/guia/fundamentos.html
+-   https://www.git-scm.com/

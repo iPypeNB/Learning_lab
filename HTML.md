@@ -66,5 +66,5 @@ dentro de src se puede ponder como estension #t="tiempo inicio","tiempo fin".
 
 
 
-
+lossy lossless tipos de formato de imagen
 
