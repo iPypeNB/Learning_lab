@@ -268,3 +268,45 @@ En este ejemplo se define un **analyzer** que elimina las etiquetas HTML, divide
    - **tokenizadores:** Puedes usar el `standard`, `whitespace`, `keyword`, entre otros según las características del texto.
    - **Filtros de tokens:** Utiliza filtros como `lowercase`, `asciifolding` (para manejar acentos y caracteres especiales), `stemmer` (para reducir palabras a su raíz)
 3. **Gestión de sinónimos:** La gestión de sinónimos es crucial para mejorar la relevancia de las búsquedas. Puedes configurar filtros de sinónimos para expandir las consultas y encontrar términos relacionados.
+   - _**Ejemplo:**_ 
+        ```json
+        {
+          "settings": {
+            "analysis": {
+              "filter": {
+                "synonym_filter": {
+                  "type": "synonym",
+                  "synonyms": [
+                    "quick, fast, speedy",
+                    "jumps, leaps"
+                  ]
+                }
+              },
+              "analyzer": {
+                "synonym_analyzer": {
+                  "tokenizer": "standard",
+                  "filter": ["lowercase", "synonym_filter"]
+                }
+              }
+            }
+          }
+        }
+        
+        ```
+4. **Manejo de idiomas:** Si se está construyendo una plataforma multilingüe, es importante utilizar `analyzers` específicos para cada idioma. ElasticSearch ofrece `analyzers` predefinidos para varios idiomas que manejan características específicas como stop words y stemming.
+    ```json
+    {
+      "settings": {
+        "analysis": {
+          "analyzer": {
+            "spanish_analyzer": {
+              "type": "standard",
+              "stopwords": "_spanish_"
+            }
+          }
+        }
+      }
+    }
+    
+    ```
+5. **Uso de Mappings:** Los mappings permiten definir cómo se debe analizar los campos y qué tipo de datos contienen. Es crucial definir correctamente los mappings para campos específicos
