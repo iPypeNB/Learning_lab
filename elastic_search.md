@@ -89,8 +89,7 @@ PUT /library/_doc/1
 {
   "title": "Aprendiendo Elasticsearch",
   "author": "John Doe",
-  "published_date": "2023-06-20",
-  "content": "Este documento trata sobre cómo funciona Elasticsearch y cómo se pueden realizar operaciones de escritura en él."
+  "published_date": "2023-06-20"
 }
 
 ```
@@ -108,5 +107,32 @@ PUT /library/_doc/1
 <div class="warning-box">
   <strong>⚠️ Warning:</strong> Las operaciones de escritura donde se incluye el body son operaciones replace, por lo que si se escribe un JSON en "Library" todo el contenido será reemplazado por el body de la petición, esto si no se comprende bien puede generar eliminación de datos no deseados.
 </div>
+
+<br>En Los casos donde se desee actualizar un campo y no crear todo un documento, esta operación de escritura se puede realizar utilizando la propiedad `_update` de la API, la diferencia está en que en el body debemos incluir el contenido a actualizar en una llave `doc`.
+
+_**Ejemplo:**_
+
+```json
+POST library/_update/1
+{
+    "doc": {
+        "author": "John Doe",
+    }
+}
+```
+
+Anteriormente hemos visto como crear y actualizar un documento. Pero, ¿que pasa si queremos actualizar o crear varios documentos?, Cuando se quieren crear o actualizar varios documentos se utiliza la propiedad `_bulk` de la API
+_**Ejemplo:**_
+```json
+POST _bulk
+{"index": {"_index": "library", "_id": "1"}}
+{"name": "Harry Potter y la piedra filosofal"}
+{"index": {"_index": "library", "_id": "2"}}
+{"name": "Superman"}
+{"index": {"_index": "library", "_id": "3"}}
+{"name": "Batman"}
+
+```
+
 
 
