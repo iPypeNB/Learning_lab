@@ -122,6 +122,7 @@ POST library/_update/1
 ```
 
 Anteriormente hemos visto como crear y actualizar un documento. Pero, ¿que pasa si queremos actualizar o crear varios documentos?, Cuando se quieren crear o actualizar varios documentos se utiliza la propiedad `_bulk` de la API
+_**Nota: Hay que tener en cuenta que las peticiones bulk deben estar en formato ND-JSON**_
 _**Ejemplo:**_
 ```json
 POST _bulk
@@ -133,6 +134,137 @@ POST _bulk
 {"name": "Batman"}
 
 ```
+_**Nota: Hay que tener en cuenta que si realizamos una operación bulk de esta manera por mas que se puedan agregar multiples docs, esto va a tener un limite máximo y no es la mejor opción cuando se quieren agregar grandes cantidades de datos o docs**_
+
+Cuando se quieren enviar grandes cantidades de datos en una operación bulk, existe una manera en la que podemos generar un archivo con la operación bulk y cargar el archivo para que este suba.
 
 
+# Acceso
 
+## Terminal
+Para poder acceder a un usuario desde la terminal podemos hacer una prueba para verificar la existencia del usuario, ingresando el siguiente comando en la terminal (Linux)
+```bash
+curl -k https://<username>:<password>@localhost:9200
+```
+Al realizar esta petición el servidor de ElasticSearch nos debe responder de la siguiente manera:
+```json
+{
+  "name" : "pc-host-name",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "jguJOqo0Q5Sb0w5fJOYYzw",
+  "version" : {
+    "number" : "8.14.1",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "93a57a1a76f5526haee6a90d1a95b06187501310",
+    "build_date" : "2024-06-10T23:35:17.114581191Z",
+    "build_snapshot" : false,
+    "lucene_version" : "9.10.0",
+    "minimum_wire_compatibility_version" : "7.17.0",
+    "minimum_index_compatibility_version" : "7.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+_**Nota: Este ejemplo se realizó con un servidor de ElasticSearch ubicado en el localhost, la url inscrita se debe cambiar cuando se hace una petición remota**_
+
+### Bulk desde Curl
+desde la terminal usando curl o desde una petición http podemos realizar una operación bulk
+```bash
+curl -k -H "Content-Type: application/x-ndjson" -XPOST https://<username>:<password>@localhost:9200/_bulk --data-binary @test_bulk.ndjson
+```
+Esto puede llegar a ser util cuando necesitemos hacer una operación bulk de forma remota a una gran cantidad de datos.
+
+# LogStash
+LogStash es una herramienta de procesamiento de datos de código abierto desarrollada por Elastic, que se utiliza para recopilar, transformar y enviar datos hacia un almacén de datos como ElasticSearch. Es parte esencial del stack ELK (ElasticSearch, logStash, Kibana) y es ampliamente utilizada en aplicaciones de análisis de logs, monitoreo de sistemas y análisis de datos en tiempo real. LogStash es un pipeline de datos flexible y escalable que permite la ingestión de datos de diversas fuentes, su transformación y su entrega a diferentes destinos. Funciona como un middleware que facilita la integración de datos y su procesamiento.
+
+## Arquitectura de LogStash
+LogStash sigue una arquitectura de **pipelines**, que se configura mediante archivos de configuración escritos en un lenguaje específico de logStash. La Arquitectura básica se compone de tres secciones principales.
+- **Input:** Define la fuente de datos. Ejemplos incluyen la lectura de archivos log, la captura de mensajes de una cola de mensajes, o la recolección de datos desde una API.
+- **Filter:** Define las transformaciones y filtrados de los datos. Ejemplos incluyen la deserialización de JSON, la normalización de datos, y el enriquecimiento de eventos con datos adicionales.
+- **Output:** Define el destino de los datos procesados. Ejemplos incluyen el envío de datos a ElasticSearch, bases de datos SQL, o sistemas de almacenamiento en la nube.
+
+_**Ejemplo:**_
+```json
+input {
+  file {
+    path => "/var/log/syslog"
+    start_position => "beginning"
+  }
+}
+
+filter {
+  grok {
+    match => { "message" => "%{SYSLOGTIMESTAMP:timestamp} %{SYSLOGHOST:host} %{DATA:program}: %{GREEDYDATA:message}" }
+  }
+  date {
+    match => ["timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    index => "syslog-%{+YYYY.MM.dd}"
+  }
+}
+
+```
+- **Input:** Se configura LogStash para leer datos desde el archivo `/var/log/syslog`
+- **Filter:** Se utiliza el plugin `grok` para descomponer los logs y extraer campos específicos. También se usa el plugin `date` para convertir el campo `timestamp` a un formato de fecha adecuado.
+- **Output:** Se envían los datos procesados a ElasticSearch, creando un índice diario basado en la fecha de los logs.
+
+# Análisis
+Consiste en aplicar una serie de transformaciones y normalizaciones a los tokens (los tokens son componentes más pequeños que el texto en sí) para aumentar la precision de la búsqueda. Es importante en cuenta que debemos tener lo conocimientos necesarios para poder comprender en que tipo de situaciones y que tipo de abstracciones queremos obtener de un análisis de datos. Este proceso es esencial para indexar el texto de manera eficiente y para realizar búsquedas precisas, el análisis se realiza mediante un `analyzer`  que se compone de 3 partes principales:
+
+1. **Character Filters (Filtros de caracteres):** Modifica el texto antes de ser tokenizado, por ejemplo, eliminando el HTML o reemplazando caracteres especiales.
+2. **Tokenizar:** Divide el texto en tokens individuales. Por ejemplo el texto "ElasticSearch es genial" de dividirá en ["ElasticSearch", "es", "genial"].
+3. **Token Filters (Filtro de tokens):** Aplican transformaciones a los tokens generados como convertirlos a minúsculas, eliminar palabras comunes (stop words), y aplicar stemming.
+
+# ¿Como mejorar el proceso de análisis?
+Para poder mejorar el proceso de análisis de ElasticSearch y, en consecuencia, la precisión de las búsquedas, podemos seguir varias prácticas recomendadas y técnicas avanzadas:
+
+_**Ejemplo:**_
+```json
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "my_html_filter": {
+          "type": "html_strip"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "standard"
+        }
+      },
+      "filter": {
+        "my_lowercase_filter": {
+          "type": "lowercase"
+        },
+        "my_stop_filter": {
+          "type": "stop",
+          "stopwords": ["the", "a", "an"]
+        }
+      },
+      "analyzer": {
+        "my_custom_analyzer": {
+          "type": "custom",
+          "char_filter": ["my_html_filter"],
+          "tokenizer": "my_tokenizer",
+          "filter": ["my_lowercase_filter", "my_stop_filter"]
+        }
+      }
+    }
+  }
+}
+
+```
+En este ejemplo se define un **analyzer** que elimina las etiquetas HTML, divide el texto en tokens utilizando el tokenizador estándar, convierte los tokens a minúsculas y elimina palabras comunes (stop words). para poder integras de forma correcta los **analyzers** y así optimizar las búsquedas, se deben tomar en cuenta los siguientes aspectos:
+
+1. **Uso correcto de los Analyzers personalizados:** ElasticSearch proporciona una variedad de analyzers predefinidos, pero a menudo es beneficioso crear un analyzer personalizado para adaptarse mejor a las necesidades específicas de la aplicación.
+2. **Optimización de tokenizers y filters:** Seleccionar el tokenizador y los filtros adecuados es fundamental, por ejemplo:
+   - **tokenizadores:** Puedes usar el `standard`, `whitespace`, `keyword`, entre otros según las características del texto.
+   - **Filtros de tokens:** Utiliza filtros como `lowercase`, `asciifolding` (para manejar acentos y caracteres especiales), `stemmer` (para reducir palabras a su raíz)
+3. **Gestión de sinónimos:** La gestión de sinónimos es crucial para mejorar la relevancia de las búsquedas. Puedes configurar filtros de sinónimos para expandir las consultas y encontrar términos relacionados.
