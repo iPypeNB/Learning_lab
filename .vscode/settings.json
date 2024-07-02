@@ -1,6 +1,13 @@
 {
     "liveServer.settings.port": 5501,
     "cSpell.words": [
-        "asciifolding"
+        "ALPHANUM",
+        "asciifolding",
+        "GREEDYDATA",
+        "lucene",
+        "ngram",
+        "portuguese",
+        "SYSLOGHOST",
+        "SYSLOGTIMESTAMP"
     ]
 }

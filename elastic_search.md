@@ -221,7 +221,76 @@ Consiste en aplicar una serie de transformaciones y normalizaciones a los tokens
 2. **Tokenizar:** Divide el texto en tokens individuales. Por ejemplo el texto "ElasticSearch es genial" de dividirá en ["ElasticSearch", "es", "genial"].
 3. **Token Filters (Filtro de tokens):** Aplican transformaciones a los tokens generados como convertirlos a minúsculas, eliminar palabras comunes (stop words), y aplicar stemming.
 
-# ¿Como mejorar el proceso de análisis?
+## Tipos de analyzer en ElasticSearch
+1. **Analyzer predefinidos**
+   1. **Standard Analyzer:** Divide el texto en tokens convirtiendo los tokens en minúsculas, elimina alguna palabras comunes y hace un poco de stemming.
+   2. **Simple Analyzer:** Divide el texto en tokens por espacios y puntuaciones, convierte todos los tokens en minúsculas.
+   3. **Whitespace Analyzer:** Divide el texto en tokens solo por espacios en blanco.
+   4. **Stop Analyzer:** Similar al `simple analyzer`, pero elimina palabras vacías en inglés.
+   5. **Keyword Analyzer:** No realiza ningún tipo de tokenización. Devuelve el texto completo como un solo token.
+   6. **Pattern Analyzer:** Usa expresiones regulares para dividir el texto en tokens.
+   7. **Fingerprint Analyzer:** Normaliza el texto, lo convierte en minúsculas, lo tokeniza por palabras, ordena los tokens y los une con un delimitador.
+2. **Analyzers de Idiomas:** Los `analyzers` también se pueden definir por idiomas, donde se optimizan los stop words, la normalización, etc. Los idiomas disponibles son: `english`, `spanish`, `french`, `german`, `italian`, `portuguese`, etc.
+3. **Analyzers Personalizados:** Permiten definir configuraciones específicas que se adapten mejor a las necesidades de la aplicación.
+4. **Analyzers Compuestos:** permiten combinar múltiples `analyzers` en una sola configuración.
+
+## Tipos de Characters filters
+1. **HTML Strip char filter:** Elimina las etiquetas HTML del texto.
+2. **Mapping char filter:** Permite definir una lista de mappings para reemplazar caracteres específicos o secuencias de caracteres por otro valores.
+3. **Pattern Replace char filter:** Utiliza expresiones regulares para buscar y reemplazar patrones en el texto.
+4. **ICU Normalizer char filter:** Este filtro normaliza caracteres `Unicode` para que diferentes formas de un carácter (como letras acentuadas) sean tratadas como iguales.
+5. **HTML Entity Replace char filter:** Este filtro reemplaza las entidades HTML con sus equivalentes de texto.
+6. **Char Group char filter:** Permite definir un grupo de caracteres y cómo deben ser reemplazados o transformados.
+
+_**Ejemplo:**_
+```json
+POST _analyze
+{
+  "tokenizer": "keyword",
+  "char_filter": {
+    "type": "mapping",
+    "mappings": [
+      ":) => :blink:"
+    ]
+  },
+  "text": "Probando :)"
+}
+
+POST _analyze
+{
+  "tokenizer": "keyword",
+  "char_filter": ["html_strip"],
+  "text": "<h1>Titulo</h1>"
+}
+```
+
+## Tokenizers
+Los tokenizers son un componente fundamental en el proceso de análisis de texto en ElasticSearch y en muchas otras aplicaciones de procesamiento de lenguaje natural (NLP). Su función principal es dividir el texto en unidades más pequeñas llamadas **tokens**. los tokens son unidades de texto que se indexarán y se utilizarán para las búsquedas. El proceso de tokenización es esencial para que el sistema pueda entender y manejas el texto de manera eficiente y eficaz.
+
+### ¿Que es un token?
+Un **token** puede ser una palabra, un número, una frase, o cualquier otra secuencia de caracteres que se considere una unidad significativa para el análisis.
+
+### ¿Porque son importantes los tokenizer?
+- **Facilita el proceso de búsqueda:** Al dividir el texto en token, se permite que el sistema de búsqueda compare estos tokens con las consultas de los usuarios, facilitando la recuperación de los documentos relevantes.
+- **Mejora la precisión:** Permite aplicar filtros y analizar los tokens de manera individual para mejorar la precisión de las búsquedas.
+
+## Tipos de tokenizers
+Los tokenizers lo podemos dividir en 3 categorías:
+1. **Los orientados al texto analizado:** Se enfocan en crear tokens mas enfocado a la búsqueda
+   1. **standard**
+   2. **idioms:** Todos los tokenizers de idiomas.
+   3. **whitespace**
+2. **Orientados a fragmentos (a palabras incompletas):** Se enfocan en crear tokens mas enfocados a el autocompletado:
+   1. **edge-ngram**
+3. **Orientado a texto estructurado:** Se enfocan en el texto categorizado y/o estructurado.
+   1. **uax_url_email**
+
+## Token Filters
+_**Nota: El orden de los filtros puede afectar el resultado final.**_
+1. **synonym_graph**
+2. **stop words**
+
+## ¿Como mejorar el proceso de análisis?
 Para poder mejorar el proceso de análisis de ElasticSearch y, en consecuencia, la precisión de las búsquedas, podemos seguir varias prácticas recomendadas y técnicas avanzadas:
 
 _**Ejemplo:**_
@@ -309,4 +378,104 @@ En este ejemplo se define un **analyzer** que elimina las etiquetas HTML, divide
     }
     
     ```
-5. **Uso de Mappings:** Los mappings permiten definir cómo se debe analizar los campos y qué tipo de datos contienen. Es crucial definir correctamente los mappings para campos específicos
+5. **Uso de Mappings:** Los mappings permiten definir cómo se debe analizar los campos y qué tipo de datos contienen. Es crucial definir correctamente los mappings para campos específicos, como texto números, fechas, etc.
+```json
+{
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "my_custom_analyzer"
+      },
+      "date": {
+        "type": "date"
+      },
+      "price": {
+        "type": "float"
+      }
+    }
+  }
+}
+
+```
+
+6. **Indexación y análisis de datos estructurados:** Para datos estructurados, como números, fechas y booleanos, asegúrate de utilizar los tipos de datos adecuados y las configuraciones apropiadas para mejorar la precisión en las búsquedas y los filtros.
+7. **Pruebas y evaluación de analyzers:** Realiza pruebas de los `analyzers` utilizando la API `_analyze` para ver cómo se procesan los textos y ajustar la configuración según los resultados
+    ```bash
+    curl -X GET "localhost:9200/index_name/_analyze" -H 'Content-Type: application/json' -d'
+    {
+      "analyzer": "my_custom_analyzer",
+      "text": "The quick brown fox jumps over the lazy dog."
+    }'
+    
+    ```
+    _**Ejemplo:**_  
+    **INPUT**
+    ```json
+    POST _analyze
+    {
+      "analyzer": "standard",
+      "text": "voy a leer Harry potter :)"
+    }
+    ```
+    **OUTPUT**
+    ```json
+    {
+      "tokens": [
+        {
+          "token": "voy",
+          "start_offset": 0,
+          "end_offset": 3,
+          "type": "<ALPHANUM>",
+          "position": 0
+        },
+        {
+          "token": "a",
+          "start_offset": 4,
+          "end_offset": 5,
+          "type": "<ALPHANUM>",
+          "position": 1
+        },
+        {
+          "token": "leer",
+          "start_offset": 6,
+          "end_offset": 10,
+          "type": "<ALPHANUM>",
+          "position": 2
+        },
+        {
+          "token": "harry",
+          "start_offset": 11,
+          "end_offset": 16,
+          "type": "<ALPHANUM>",
+          "position": 3
+        },
+        {
+          "token": "potter",
+          "start_offset": 17,
+          "end_offset": 23,
+          "type": "<ALPHANUM>",
+          "position": 4
+        }
+      ]
+    }
+    ```
+# Mappings
+Es el proceso en ElasticSearch donde se define cómo se va a almacenar e indexar el contenido de un documento, este proceso incluye varios componentes:
+1. **Field Types:** Define el tipo de dato que se espera de un campo, algunos tipos comunes son: `string`, `boolean`, `date`, `numeric`, `date`, `object`, `array`, `geo`.
+2. **Analyzers:** define cómo se debe analizar y tokenizar el texto para la indexación. Se puede asignar un analizador específico a un campo para personalizar su análisis.
+3. **Index Options (Opciones de Indexación):** Controla como se indexan los campos:
+   1. **Indexado:** Permite que los campos sean indexados para búsquedas.
+   2. **Almacenado:** Permite que los campos sean almacenados en el índice para recuperación, aunque no sean buscables.
+4. **Dynamic Mapping (mapeo dinámico):** Permite que ElasticSearch cree automáticamente mappings para campos nuevos que no están explícitamente definidos en el mapping inicial.
+5. **Field data (Datos de Campo):** Controla cómo se manejan los datos específicos de un campo, como valores predeterminados y reglas de validación.
+
+## Mapping dinámico vs Mapping estático.
+
+## Mappings de tipo texto
+- **Text:** Búsquedas analizadas, búsquedas de textos completas
+- **Keyword:** Match exactos, búsquedas no analizadas, case sensitive, filtros y ordenamiento.
+
+
+
+cuando se utilizas ID'S de tipo numérico Elastic search recomienda usar mapping de tipo keyword.
