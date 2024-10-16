@@ -6,6 +6,7 @@
         "GREEDYDATA",
         "lucene",
         "ngram",
+        "panear",
         "portuguese",
         "SYSLOGHOST",
         "SYSLOGTIMESTAMP"

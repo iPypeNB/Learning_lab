@@ -4,7 +4,7 @@
 
 Es un lenguaje de progamación optimizado al cliente creado en 2011 por Google con la inteción de crear aplicaciones de forma rapida para cualquier plataforma. Dart es un lenguaje estructurado, fuertemente tipado e "interpretado" que hace uso de una vm para su interpretación (dartVM). Aunque dependiendo del modo de ejecución dartVM va a interpretar (JIT) o compilar (AOT) el código dart.
 
-## Caractarísticas de Dart
+## Características de Dart
 
 - Es un lenguaje multiparadigma (permite programar de forma imperativa y declarativa (flutter)).
 - "Todo en dart es un objeto" (orientado a objetos).
